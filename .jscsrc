@@ -1,0 +1,4 @@
+{
+  // airbnb js style https://github.com/jscs-dev/node-jscs/blob/master/presets/airbnb.json
+  "preset": "airbnb"
+}

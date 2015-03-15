@@ -1,1 +1,1 @@
-# testamd
+# Test implementation of AMD

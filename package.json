@@ -1,0 +1,21 @@
+{
+  "name": "testamd",
+  "version": "0.0.1",
+  "description": "My implementation of AMD.",
+  "scripts": {
+    "test": "gulp"
+  },
+  "author": "Victor D",
+  "license": "Beerware",
+  "devDependencies": {
+    "gulp": "^3.8.11",
+    "gulp-jscs": "^1.4.0",
+    "gulp-jshint": "^1.9.2",
+    "gulp-karma": "0.0.4",
+    "jasmine-core": "^2.2.0",
+    "jshint-stylish": "^1.0.1",
+    "karma": "^0.12.31",
+    "karma-chrome-launcher": "^0.1.7",
+    "karma-jasmine": "^0.3.5"
+  }
+}
