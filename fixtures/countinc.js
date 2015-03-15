@@ -1,1 +1,2 @@
-window.COUNT++;
+'use strict';
+COUNT++;
