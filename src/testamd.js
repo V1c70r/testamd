@@ -1,28 +1,23 @@
 'use strict';
 
-var testamd; /* exported testamd */
-var define; /* exported define */
-var require; /* exported require */
+/* exported testamd */
+/* exported define */
+/* exported require */
 
 /**
  * AMD implementation.
  */
-(function(exports) {
-  exports.testamd = {};
-
+var testamd = (function() {
   var config = {
     baseUrl: '', // base url for script loading
     requireErrorHandler: function(error) { throw error; } // what to do when can't require a module
   };
-  exports.testamd.config = config;
-  exports.testamd.defaultRequireErrorHandler = config.requireErrorHandler;
 
   /**
    * Module's definitions described by 'define' function.
    * @type {Object.<string, Definition>}
    */
   var definitions = {};
-  exports.testamd.definitions = definitions;
 
   /**
    * Loaded module.
@@ -34,7 +29,6 @@ var require; /* exported require */
    * @type {Object.<string, Module>}
    */
   var modules = {};
-  exports.testamd.modules = modules;
 
   /**
    * Module definition.
@@ -48,7 +42,6 @@ var require; /* exported require */
     this.dependencies = dependencies;
     this.callback = callback;
   }
-  exports.testamd.Definition = Definition;
 
   /**
    * Define a module.
@@ -76,7 +69,6 @@ var require; /* exported require */
 
     definitions[name] = new Definition(name, dependencies, callback);
   }
-  exports.define = define;
 
   /**
    * Require dependencies and pass them to callback.
@@ -100,7 +92,6 @@ var require; /* exported require */
       callback.apply(null, injection);
     });
   }
-  exports.require = require;
 
   /**
    * Error from TestAmd.
@@ -115,7 +106,6 @@ var require; /* exported require */
   }
   TestAmdError.prototype = Object.create(Error.prototype);
   TestAmdError.prototype.constructor = TestAmdError;
-  exports.testamd.TestAmdError = TestAmdError;
 
   /**
    * Load each module and pass that modules to callback.
@@ -198,7 +188,6 @@ var require; /* exported require */
       callback(null, definitions[name]);
     });
   }
-  exports.testamd.loadDefinition = loadDefinition;
 
   /**
    * Run async function for each array element and then call the callback.
@@ -235,7 +224,6 @@ var require; /* exported require */
       });
     });
   }
-  exports.testamd.asyncMap = asyncMap;
 
   /**
    * Script tags which are attached to the document but not loaded/failed.
@@ -277,7 +265,6 @@ var require; /* exported require */
       document.head.appendChild(script);
     }
   }
-  exports.testamd.loadScript = loadScript;
 
   /**
    * Get url to module.
@@ -287,5 +274,23 @@ var require; /* exported require */
   function url(name) {
     return config.baseUrl + name + '.js';
   }
-  exports.testamd.url = url;
-})(window);
+
+  return {
+    Definition: Definition,
+    TestAmdError: TestAmdError,
+
+    config: config,
+    defaultRequireErrorHandler: config.requireErrorHandler,
+    definitions: definitions,
+    modules: modules,
+    define: define,
+    require: require,
+    loadDefinition: loadDefinition,
+    asyncMap: asyncMap,
+    loadScript: loadScript,
+    url: url
+  };
+})();
+
+var define = testamd.define;
+var require = testamd.require;
