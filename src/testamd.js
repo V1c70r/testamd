@@ -285,8 +285,8 @@ var testamd = (function() {
     modules: modules,
     define: define,
     require: require,
-    loadDefinition: loadDefinition,
     asyncMap: asyncMap,
+    loadDefinition: loadDefinition,
     loadScript: loadScript,
     url: url
   };
