@@ -3,7 +3,7 @@
 var gulp = require('gulp');
 var jshint = require('gulp-jshint');
 var jscs = require('gulp-jscs');
-var karma = require('gulp-karma');
+var karma = require('karma').server;
 
 gulp.task('default', ['test']);
 
@@ -15,21 +15,16 @@ gulp.task('lint', function() {
     .pipe(jscs());
 });
 
-gulp.task('test', ['lint'], function() {
-  return gulp.src([])
-    .pipe(karma({
-      configFile: 'karma.conf.js',
-      action: 'run'
-    }))
-    .on('error', function(error) {
-      throw error;
-    });
+gulp.task('test', ['lint'], function(done) {
+  karma.start({
+    configFile: __dirname + '/karma.conf.js'
+  }, done);
 });
 
-gulp.task('watch', function() {
-  return gulp.src([])
-    .pipe(karma({
-      configFile: 'karma.conf.js',
-      action: 'watch'
-    }));
+gulp.task('watch', function(done) {
+  karma.start({
+    configFile: __dirname + '/karma.conf.js',
+    autoWatch: true,
+    singleRun: false
+  }, done);
 });
