@@ -5,7 +5,19 @@
 /* global require */
 
 function scriptTagCount() {
-  return document.querySelectorAll('head script[data-created-by=testamd]').length;
+  return document.head.querySelectorAll('script[data-created-by=testamd]').length;
+}
+
+function countdown(count, func) {
+  return function() {
+    count--;
+
+    if (count === 0) {
+      func();
+    } else if (count < 0) {
+      throw new Error('Counter less then zero!');
+    }
+  };
 }
 
 describe('testamd default config', function() {
@@ -37,7 +49,7 @@ describe('testamd behaviour', function() {
       delete testamd.modules[key];
     });
 
-    var scriptNodes = document.querySelectorAll('head > script[data-created-by=testamd]');
+    var scriptNodes = document.head.querySelectorAll('script[data-created-by=testamd]');
     var scripts = Array.prototype.slice.call(scriptNodes);
     scripts.forEach(function(script) {
       document.head.removeChild(script);
@@ -188,6 +200,8 @@ describe('testamd behaviour', function() {
     });
 
     it('should load content of script', function(done) {
+      expect(window.COUNT).toEqual(0);
+
       testamd.loadScript(countIncPath, function(error) {
         expect(error).toBeNull();
         expect(window.COUNT).toEqual(1);
@@ -196,6 +210,7 @@ describe('testamd behaviour', function() {
     });
 
     it('should add script tag if new loading', function(done) {
+      expect(window.COUNT).toEqual(0);
       expect(scriptTagCount()).toEqual(0);
 
       testamd.loadScript(countIncPath, function(error) {
@@ -207,23 +222,27 @@ describe('testamd behaviour', function() {
     });
 
     it('should use old script tag if loading in progress', function(done) {
+      expect(window.COUNT).toEqual(0);
       expect(scriptTagCount()).toEqual(0);
+      var countdownThenDone = countdown(2, done);
 
       testamd.loadScript(countIncPath, function(error) {
         expect(error).toBeNull();
         expect(window.COUNT).toEqual(1);
         expect(scriptTagCount()).toEqual(1);
+        countdownThenDone();
       });
 
       testamd.loadScript(countIncPath, function(error) {
         expect(error).toBeNull();
         expect(window.COUNT).toEqual(1);
         expect(scriptTagCount()).toEqual(1);
-        done();
+        countdownThenDone();
       });
     });
 
     it('should add new script tag if prev loading is finished successfully', function(done) {
+      expect(window.COUNT).toEqual(0);
       expect(scriptTagCount()).toEqual(0);
 
       testamd.loadScript(countIncPath, function(error) {
@@ -256,42 +275,30 @@ describe('testamd behaviour', function() {
     });
 
     it('should call all callbacks when script loaded successfully', function(done) {
-      var count = 0;
-      function ifCountTwoThenDone() {
-        count++;
-        if (count === 2) {
-          done();
-        }
-      }
+      var countdownThenDone = countdown(2, done);
 
       testamd.loadScript(countIncPath, function(error) {
         expect(error).toBeNull();
-        ifCountTwoThenDone();
+        countdownThenDone();
       });
 
       testamd.loadScript(countIncPath, function(error) {
         expect(error).toBeNull();
-        ifCountTwoThenDone();
+        countdownThenDone();
       });
     });
 
     it('should pass en error to all callbacks when script loading failed', function(done) {
-      var count = 0;
-      function ifCountTwoThenDone() {
-        count++;
-        if (count === 2) {
-          done();
-        }
-      }
+      var countdownThenDone = countdown(2, done);
 
       testamd.loadScript('404.js', function(error) {
         expect(error.constructor).toEqual(testamd.TestAmdError);
-        ifCountTwoThenDone();
+        countdownThenDone();
       });
 
       testamd.loadScript('404.js', function(error) {
         expect(error.constructor).toEqual(testamd.TestAmdError);
-        ifCountTwoThenDone();
+        countdownThenDone();
       });
     });
   });
