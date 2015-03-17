@@ -87,7 +87,10 @@ var testamd = (function() {
     }
 
     loadModules([], dependencies, function(error, injection) {
-      if (error) { config.requireErrorHandler(error); }
+      if (error) {
+        config.requireErrorHandler(error);
+        return;
+      }
 
       callback.apply(null, injection);
     });
@@ -144,6 +147,7 @@ var testamd = (function() {
           return dep === name ? dep + '!' : dep;
         }).join('->');
         callback(new TestAmdError('CyclicDependencyDetected', message));
+        return;
       }
 
       loadModules(newLoadModuleChain, definition.dependencies, function(error, injection) {
